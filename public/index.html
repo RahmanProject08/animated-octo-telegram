@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Security Operations Center - AI & Webhook Monitoring</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220%22><text y=%2226%22 font-size=%2224%22>🛡️</text></svg>">
+</head>
+<body>
+  <div class="container">
+
+    <!-- HEADER -->
+    <header class="header">
+      <div class="header-title">
+        <h1>SOC Monitoring & AI Security Hub</h1>
+        <p>Real-Time Webhook HMAC Verification, Parallel Machine Learning, & Telegram Alert</p>
+      </div>
+      <div class="system-badge">
+        <span class="pulse-dot"></span>
+        <span>GATEWAY ONLINE</span>
+      </div>
+    </header>
+
+    <!-- [9.2] METRIC CARD DENGAN TRANSISI DINAMIS -->
+    <section id="metricCard" class="glass-card state-aman">
+      <div class="metric-inner">
+        <div class="metric-left">
+          <div id="statusBadge" class="status-badge">AMAN</div>
+          <div id="statusHeadline" class="status-headline">SYSTEM SECURED</div>
+          <div id="statusDesc" class="status-desc">Semua parameter operasional dalam batas toleransi aman.</div>
+        </div>
+        <div class="metric-meta">
+          <div>TERAKHIR DIPERBARUI</div>
+          <div id="lastUpdated" style="font-weight: 700; color: #f1f5f9; margin-top: 0.25rem;">--:--:--</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MAIN GRID CONTROLS -->
+    <div class="dashboard-grid">
+
+      <!-- [9.3] PANEL SIMULATOR WEBHOOK HMAC -->
+      <section class="glass-card">
+        <h2 class="card-title">
+          <span>🔐</span> Simulator Webhook HMAC (Client-Side)
+        </h2>
+        <form id="webhookForm">
+          <div class="form-group">
+            <label for="webhookStatus">(a) Status Insiden</label>
+            <select id="webhookStatus">
+              <option value="BAHAYA">BAHAYA (Trigger Alert Merah)</option>
+              <option value="AMAN">AMAN (Kembali Hijau)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="threatLevel">(b) Level Ancaman (0 - 3)</label>
+            <select id="threatLevel">
+              <option value="0">0 - Normal</option>
+              <option value="1">1 - Low</option>
+              <option value="2">2 - Medium</option>
+              <option value="3" selected>3 - Kritis (Critical)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="webhookMessage">(c) Pesan Laporan</label>
+            <input type="text" id="webhookMessage" value="Terdeteksi upaya eksfiltrasi data via SQLi!" required>
+          </div>
+
+          <div class="form-group">
+            <label for="hmacSecret">(d) Kunci Rahasia HMAC (Shared Secret)</label>
+            <input type="text" id="hmacSecret" value="default_hmac_secret_key_2026" required>
+          </div>
+
+          <div class="form-group">
+            <label class="checkbox-label">
+              <input type="checkbox" id="tamperSignature">
+              <span>(e) Kirim tanda tangan palsu (Simulasi Serangan 401)</span>
+            </label>
+          </div>
+
+          <button type="submit" id="btnSubmitWebhook" class="btn btn-primary">
+            (f) Hitung HMAC (Web Crypto) & Kirim Webhook
+          </button>
+        </form>
+      </section>
+
+      <!-- [9.4] PANEL BENCHMARK AI ASYNCHRONOUS -->
+      <section class="glass-card">
+        <h2 class="card-title">
+          <span>⚡</span> Benchmark AI Asynchronous (Paralel)
+        </h2>
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.25rem;">
+          Memanggil Model RF (0.3s) dan SVM (0.5s) secara paralel menggunakan <code>asyncio.gather()</code>. Total latency dibatasi pada waktu model terlambat (≤ 0.6s).
+        </p>
+
+        <div class="form-group">
+          <label for="aiInputPrompt">Input Data Teks Analisis</label>
+          <input type="text" id="aiInputPrompt" value="Payload mencurigakan dan bahaya serangan zero-day">
+        </div>
+
+        <button id="btnRunAI" class="btn btn-cyan">
+          Jalankan Rantai AI (Paralel)
+        </button>
+
+        <div class="benchmark-banner">
+          <span>Total Waktu Eksekusi:</span>
+          <strong id="aiExecDuration" style="color: #38bdf8;">Belum diuji</strong>
+        </div>
+
+        <div class="ai-results-grid">
+          <div id="rfResultCard" class="ai-card">
+            <div class="ai-card-title">Model A: Random Forest (0.3s)</div>
+            <div id="rfPrediction" class="ai-card-pred">-</div>
+            <div id="rfConfidence" class="ai-card-conf">Confidence: -</div>
+          </div>
+          <div id="svmResultCard" class="ai-card">
+            <div class="ai-card-title">Model B: SVM (0.5s)</div>
+            <div id="svmPrediction" class="ai-card-pred">-</div>
+            <div id="svmConfidence" class="ai-card-conf">Confidence: -</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- [9.5] LOG CONSOLE VIRTUAL -->
+      <section class="glass-card console-card">
+        <h2 class="card-title">
+          <span>💻</span> Log Console Virtual
+        </h2>
+        <div id="consoleBox" class="console-box">
+          <!-- Log entries inserted here dynamically -->
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
