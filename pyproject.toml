@@ -1,0 +1,12 @@
+[project]
+name = "telegram-supabase-app"
+version = "0.1.0"
+description = "SOC Monitoring and AI Security Hub"
+dependencies = [
+    "fastapi",
+    "uvicorn",
+    "pydantic"
+]
+
+[tool.vercel]
+entrypoint = "api.proses_ai:app"
