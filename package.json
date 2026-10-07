@@ -1,0 +1,8 @@
+{
+  "name": "telegram-supabase-app",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "test:flows": "node scripts/test_flows.js"
+  }
+}
