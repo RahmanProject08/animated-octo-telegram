@@ -1,16 +1,12 @@
 import asyncio
 import time
 from typing import Dict, Any
-from fastapi import FastAPI, Query
+from fastapi import FastAPI, Query, Request
 
 app = FastAPI(title="AI Async Serverless API")
 
 
 async def predict_model_rf(text: str) -> Dict[str, Any]:
-    """
-    Simulasi Model A: Random Forest (RF)
-    Delay simulasi: 0.3 detik
-    """
     await asyncio.sleep(0.3)
     prediction = "BAHAYA" if "bahaya" in text.lower() or "threat" in text.lower() else "AMAN"
     confidence = 0.94 if prediction == "BAHAYA" else 0.88
@@ -22,10 +18,6 @@ async def predict_model_rf(text: str) -> Dict[str, Any]:
 
 
 async def predict_model_svm(text: str) -> Dict[str, Any]:
-    """
-    Simulasi Model B: Support Vector Machine (SVM)
-    Delay simulasi: 0.5 detik
-    """
     await asyncio.sleep(0.5)
     prediction = "BAHAYA" if "bahaya" in text.lower() or "threat" in text.lower() else "AMAN"
     confidence = 0.91 if prediction == "BAHAYA" else 0.85
@@ -36,20 +28,16 @@ async def predict_model_svm(text: str) -> Dict[str, Any]:
     }
 
 
-@app.get("/api/proses_ai")
-async def proses_ai(input: str = Query(..., description="Data teks input")):
-    """
-    Endpoint pemrosesan AI menggunakan asyncio.gather()
-    untuk mengeksekusi kedua model secara asynchronous dan paralel.
-    """
+@app.api_route("/{full_path:path}", methods=["GET", "POST"])
+async def catch_all_proses_ai(request: Request, full_path: str = ""):
+    # Ambil parameter query input
+    input_text = request.query_params.get("input", "Analisis data")
+
     start_time = time.time()
-
-    # Eksekusi paralel kedua model AI
     res_rf, res_svm = await asyncio.gather(
-        predict_model_rf(input),
-        predict_model_svm(input)
+        predict_model_rf(input_text),
+        predict_model_svm(input_text)
     )
-
     end_time = time.time()
     duration_seconds = round(end_time - start_time, 4)
 

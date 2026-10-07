@@ -18,7 +18,7 @@ export default async function handler(req, res) {
     });
   }
 
-  // (b) Ambil isi body request sebagai string (JSON.stringify jika berupa objek)
+  // (b) Ambil isi body request sebagai string
   let rawBody = '';
   if (typeof req.body === 'string') {
     rawBody = req.body;
@@ -29,13 +29,13 @@ export default async function handler(req, res) {
   }
 
   // (c) Buat HMAC-SHA256 dari body string
-  const secret = process.env.HMAC_SECRET || '';
+  const secret = process.env.HMAC_SECRET || 'default_hmac_secret_key_2026';
   const calculatedHmac = crypto
     .createHmac('sha256', secret)
     .update(rawBody)
     .digest('hex');
 
-  // (d) Bandingkan HMAC yang dibuat dengan nilai di header x-signature (perbandingan string)
+  // (d) Bandingkan HMAC yang dibuat dengan nilai di header x-signature
   if (calculatedHmac !== signature) {
     // (e) Jika tidak cocok, tolak dengan 401 Unauthorized
     return res.status(401).json({
@@ -55,13 +55,15 @@ export default async function handler(req, res) {
 
   let telegramSent = false;
   let telegramResponse = null;
+  let telegramError = null;
 
   if (telegramToken && chatId) {
-    const textMsg = `🚨 *SECURITY ALERT - SUPABASE WEBHOOK* 🚨\n\n` +
-      `• *Status*: ${statusKejadian}\n` +
-      `• *Level Ancaman*: ${threatLevel}\n` +
-      `• *Detail*: ${detailPesan}\n` +
-      `• *Timestamp*: ${new Date().toISOString()}`;
+    // Format teks aman tanpa markdown parsing issue
+    const textMsg = `🚨 SECURITY ALERT - SUPABASE WEBHOOK 🚨\n\n` +
+      `• Status: ${statusKejadian}\n` +
+      `• Level Ancaman: ${threatLevel}\n` +
+      `• Detail: ${detailPesan}\n` +
+      `• Timestamp: ${new Date().toISOString()}`;
 
     try {
       const tgRes = await fetch(`https://api.telegram.org/bot${telegramToken}/sendMessage`, {
@@ -71,21 +73,26 @@ export default async function handler(req, res) {
         },
         body: JSON.stringify({
           chat_id: chatId,
-          text: textMsg,
-          parse_mode: 'Markdown'
+          text: textMsg
         })
       });
       telegramResponse = await tgRes.json();
       telegramSent = tgRes.ok;
+      if (!tgRes.ok) {
+        telegramError = telegramResponse;
+      }
     } catch (err) {
-      console.error('Gagal mengirim ke Telegram:', err.message);
+      telegramError = err.message;
     }
+  } else {
+    telegramError = `Missing env: token=${!!telegramToken}, chat_id=${!!chatId}`;
   }
 
   return res.status(200).json({
     status: 'success',
     message: 'Webhook received and verified successfully',
     telegram_alert_sent: telegramSent,
+    telegram_error: telegramError,
     data: {
       status: statusKejadian,
       threat_level: threatLevel,
